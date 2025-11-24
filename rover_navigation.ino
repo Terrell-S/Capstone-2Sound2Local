@@ -5,7 +5,8 @@
 void IRAM_ATTR updateEncoder();
 
 // ESP32 LEDC (PWM) settings
-const int pwmChannel = 0;
+const int pwmChannelR = 0;
+const int pwmChannelL = 1;
 const int pwmFreq    = 20000; // 20 kHz
 const int pwmRes     = 8;     // duty 0..255
 
@@ -21,7 +22,7 @@ void setup() {
   pinMode(EncoderPinA, INPUT_PULLUP);
   pinMode(EncoderPinB, INPUT_PULLUP);
 
-  ledcAttachChannel(EnablePinR, pwmFreq, pwmRes,pwmChannel);
+  ledcAttachChannel(EnablePinR, pwmFreq, pwmRes,pwmChannelR);
   //ledcSetup(pwmChannel, pwmFreq, pwmRes); //outdated functions
   //ledcAttachPin(EnablePin, pwmChannel);
 
@@ -38,6 +39,7 @@ long prevCount = 0;
 int angles[3] = {30,-45, 60};
 unsigned long lastTime = 0;
 int thing = 1; // delay turns to every 2 seconds 
+float avgV = 0;
 void loop() {
   // read encoder safely and print distance
   float speedPct = 15.0f;
@@ -69,26 +71,42 @@ void loop() {
 
 
   float velocity =  metersFromCounts(delta)/(dt_ms/1000.0f); //divide by 1000 so ms -> s
-
+  avgV += (velocity-avgV)/thing;
+  Serial.print("average velocity: ");
+  Serial.println(avgV,6);
 
   // turn test code
-  if(thing % 30 == 0){
-    Serial.println("turn params: ");
-    Serial.print("angle: ");
-    Serial.println(angles[pos]);
-    Serial.print("velocity: ");
-    Serial.println(velocity,6);
-    Serial.print("speed percent: ");
-    Serial.println(speedPct);
-    Serial.println("going to turn...");
-    turn(angles[pos],velocity,speedPct);
-    pos++;
-    if (pos > 2) pos = 0;
-  }
+  // if(thing % 30 == 0){
+  //   Serial.println("turn params: ");
+  //   Serial.print("angle: ");
+  //   Serial.println(angles[pos]);
+  //   Serial.print("average velocity: ");
+  //   Serial.println(avgV,6);
+  //   Serial.print("speed percent: ");
+  //   Serial.println(speedPct);
+  //   Serial.println("going to turn...");
+  //   turn(angles[pos],avgV,speedPct);
+  //   pos++;
+  //   if (pos > 2) pos = 0;
+  // }
 
   thing++;
   delay(100);
 }
+// turn test code
+  // if(thing % 30 == 0){
+  //   Serial.println("turn params: ");
+  //   Serial.print("angle: ");
+  //   Serial.println(angles[pos]);
+  //   Serial.print("average velocity: ");
+  //   Serial.println(avgV,6);
+  //   Serial.print("speed percent: ");
+  //   Serial.println(speedPct);
+  //   Serial.println("going to turn...");
+  //   turn(angles[pos],avgV,speedPct);
+  //   pos++;
+  //   if (pos > 2) pos = 0;
+  // }
 
 void IRAM_ATTR updateEncoder() {
   // Quadrature direction from B at the instant A rises
