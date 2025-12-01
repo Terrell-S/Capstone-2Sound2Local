@@ -39,7 +39,7 @@ def make_map(motor_data, map_filename="map.png"):
 
     # Plot path
     xs, ys = zip(*positions)
-    plt.plot(xs, ys, marker='o')
+    plt.plot(xs, ys, marker='o',markersize=4)
     plt.axis('equal')
     plt.title("Path drawn from motor data")
     plt.xlabel("X position (m)")
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     import random
     #random motor data
     motor_data = []
-    for _ in range(20):
+    for _ in range(1365):
         left = random.uniform(0.0, 0.2)
         right = random.uniform(0.0, 0.2)
         motor_data.append((left, right))

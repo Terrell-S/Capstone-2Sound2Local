@@ -141,7 +141,7 @@ class WiFiChannel:
         if not self.has_client or self.client is None:
             raise RuntimeError("No client connected")
         try:
-            message_bytes = self.client.recv(128)
+            message_bytes = self.client.recv(32768)
             if not message_bytes:
                 # remote closed
                 self.has_client = False
