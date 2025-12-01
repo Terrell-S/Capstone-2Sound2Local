@@ -2,7 +2,7 @@ import networking as nt
 import socket
 
 sock = socket.socket()
-sock.connect(('127.0.0.1',5000 ))
+sock.connect(('192.168.1.102',5000 )) #ip address of device running server. '127.0.0.1'   '192.168.1.102'
 
 msg = ''
 while True:
